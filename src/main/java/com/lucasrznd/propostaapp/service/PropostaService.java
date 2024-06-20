@@ -16,6 +16,8 @@ public class PropostaService {
 
     private PropostaRepository propostaRepository;
 
+    private NotificacaoService notificacaoService;
+
     public List<PropostaResponseDTO> findAll() {
         return PropostaMapper.INSTANCE.toListDTO(propostaRepository.findAll());
     }
@@ -24,7 +26,10 @@ public class PropostaService {
         Proposta proposta = PropostaMapper.INSTANCE.toEntity(requestDTO);
         propostaRepository.save(proposta);
 
-        return PropostaMapper.INSTANCE.toDTO(proposta);
+        PropostaResponseDTO response = PropostaMapper.INSTANCE.toDTO(proposta);
+        notificacaoService.notify(response, "proposta-pendente.ex");
+
+        return response;
     }
 
 }
