@@ -1,12 +1,16 @@
 package com.lucasrznd.propostaapp.mapper;
 
 import com.lucasrznd.propostaapp.dto.PropostaRequestDTO;
+import com.lucasrznd.propostaapp.dto.PropostaResponseDTO;
 import com.lucasrznd.propostaapp.entities.Proposta;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 
 @Mapper
 public interface PropostaMapper {
+
+    PropostaMapper INSTANCE = Mappers.getMapper(PropostaMapper.class);
 
     @Mapping(target = "usuario.nome", source = "nome")
     @Mapping(target = "usuario.sobrenome", source = "sobrenome")
@@ -18,5 +22,12 @@ public interface PropostaMapper {
     @Mapping(target = "integrada", ignore = true)
     @Mapping(target = "observacao", ignore = true)
     Proposta toEntity(PropostaRequestDTO requestDTO);
+
+    @Mapping(target = "nome", source = "usuario.nome")
+    @Mapping(target = "sobrenome", source = "usuario.sobrenome")
+    @Mapping(target = "telefone", source = "usuario.telefone")
+    @Mapping(target = "cpf", source = "usuario.cpf")
+    @Mapping(target = "renda", source = "usuario.renda")
+    PropostaResponseDTO toDTO(Proposta proposta);
 
 }
