@@ -5,6 +5,7 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +13,9 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfiguration {
+
+    @Value("${rabbitmq.propostapendente.exchange}")
+    private String exchange;
 
     @Bean
     public Queue createQueuePropostaPendenteMsAnaliseCredito() {
@@ -45,7 +49,7 @@ public class RabbitMQConfiguration {
 
     @Bean
     public FanoutExchange createFanoutExchangePropostaPendente() {
-        return ExchangeBuilder.fanoutExchange("proposta-pendente.ex").build();
+        return ExchangeBuilder.fanoutExchange(exchange).build();
     }
 
     @Bean
