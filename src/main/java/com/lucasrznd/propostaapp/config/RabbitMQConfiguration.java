@@ -1,7 +1,6 @@
 package com.lucasrznd.propostaapp.config;
 
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.QueueBuilder;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -13,22 +12,22 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfiguration {
 
     @Bean
-    public Queue criarFilaPropostaPendenteMsAnaliseCredito() {
+    public Queue createQueuePropostaPendenteMsAnaliseCredito() {
         return QueueBuilder.durable("proposta-pendente.ms-analise-credito").build();
     }
 
     @Bean
-    public Queue criarFilaPropostaPendenteMsNotificacao() {
+    public Queue createQueuePropostaPendenteMsNotificacao() {
         return QueueBuilder.durable("proposta-pendente.ms-notificacao").build();
     }
 
     @Bean
-    public Queue criarFilaPropostaConcluidaMsProposta() {
+    public Queue createQueuePropostaConcluidaMsProposta() {
         return QueueBuilder.durable("proposta-concluida.ms-proposta").build();
     }
 
     @Bean
-    public Queue criarFilaPropostaConcluidaMsNotificacao() {
+    public Queue createQueuePropostaConcluidaMsNotificacao() {
         return QueueBuilder.durable("proposta-concluida.ms-notificacao").build();
     }
 
@@ -40,6 +39,23 @@ public class RabbitMQConfiguration {
     @Bean
     public ApplicationListener<ApplicationReadyEvent> initAdmin(RabbitAdmin rabbitAdmin) {
         return event -> rabbitAdmin.initialize();
+    }
+
+    @Bean
+    public FanoutExchange createFanoutExchangePropostaPendente() {
+        return ExchangeBuilder.fanoutExchange("proposta-pendente.ex").build();
+    }
+
+    @Bean
+    public Binding createBindingPropostaPendenteMsAnaliseCredito() {
+        return BindingBuilder.bind(createQueuePropostaPendenteMsAnaliseCredito())
+                .to(createFanoutExchangePropostaPendente());
+    }
+
+    @Bean
+    public Binding createBindingPropostaPendenteMsNotificacao() {
+        return BindingBuilder.bind(createQueuePropostaPendenteMsNotificacao())
+                .to(createFanoutExchangePropostaPendente());
     }
 
 }
