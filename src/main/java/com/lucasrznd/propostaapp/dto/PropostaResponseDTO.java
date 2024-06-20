@@ -17,7 +17,7 @@ public class PropostaResponseDTO {
     private String telefone;
     private String cpf;
     private Double renda;
-    private String valorSolicitado;
+    private String valorSolicitadoFmt;
     private String prazoPagamento;
     private Boolean aprovado;
     private String observacao;
