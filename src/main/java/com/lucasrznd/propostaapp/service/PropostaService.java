@@ -15,14 +15,14 @@ public class PropostaService {
 
     private PropostaRepository propostaRepository;
 
-    private NotificacaoService notificacaoService;
+    private NotificacaoRabbitService notificacaoRabbitService;
 
     private String exchange;
 
-    public PropostaService(PropostaRepository propostaRepository, NotificacaoService notificacaoService,
+    public PropostaService(PropostaRepository propostaRepository, NotificacaoRabbitService notificacaoRabbitService,
                            @Value("${rabbitmq.propostapendente.exchange}") String exchange) {
         this.propostaRepository = propostaRepository;
-        this.notificacaoService = notificacaoService;
+        this.notificacaoRabbitService = notificacaoRabbitService;
         this.exchange = exchange;
     }
 
@@ -34,10 +34,18 @@ public class PropostaService {
         Proposta proposta = PropostaMapper.INSTANCE.toEntity(requestDTO);
         propostaRepository.save(proposta);
 
-        PropostaResponseDTO response = PropostaMapper.INSTANCE.toDTO(proposta);
-        notificacaoService.notify(response, exchange);
+        notifyRabbitMQ(proposta);
 
-        return response;
+        return PropostaMapper.INSTANCE.toDTO(proposta);
+    }
+
+    private void notifyRabbitMQ(Proposta proposta) {
+        try {
+            notificacaoRabbitService.notify(proposta, exchange);
+        } catch (RuntimeException e) {
+            proposta.setIntegrada(false);
+            propostaRepository.save(proposta);
+        }
     }
 
 }
