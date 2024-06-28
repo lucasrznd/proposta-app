@@ -32,6 +32,7 @@ public interface PropostaMapper {
     @Mapping(target = "cpf", source = "usuario.cpf")
     @Mapping(target = "renda", source = "usuario.renda")
     @Mapping(target = "valorSolicitadoFmt", expression = "java(setValorSolicitadoFmt(proposta))")
+    @Mapping(target = "aprovado", source = "aprovada")
     PropostaResponseDTO toDTO(Proposta proposta);
 
     List<PropostaResponseDTO> toListDTO(Iterable<Proposta> propostas);
